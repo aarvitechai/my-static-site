@@ -41,9 +41,9 @@ jobs:
       - name: Build
         run: dotnet build RedStarVibe.slnx --configuration Release --no-restore
 
-      # Tests are added in Phase 1, slice 5; this step starts doing work then.
+      # xUnit v3 on Microsoft.Testing.Platform (opted in via global.json), hence --solution.
       - name: Test
-        run: dotnet test RedStarVibe.slnx --configuration Release --no-build
+        run: dotnet test --solution RedStarVibe.slnx --configuration Release --no-build
 
   web:
     name: Web (React)

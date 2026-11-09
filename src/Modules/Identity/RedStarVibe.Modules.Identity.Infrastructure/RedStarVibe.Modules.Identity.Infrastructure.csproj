@@ -3,7 +3,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RedStarVibe.Modules.Identity.Domain\RedStarVibe.Modules.Identity.Domain.csproj" />
-    <ProjectReference Include="..\..\..\BuildingBlocks\RedStarVibe.BuildingBlocks\RedStarVibe.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\RedStarVibe.BuildingBlocks.Persistence\RedStarVibe.BuildingBlocks.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>

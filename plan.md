@@ -137,18 +137,18 @@ docker compose up -d
   - [x] Global exception handler returning ProblemDetails
   - [x] Correlation-ID middleware, Serilog to Seq
   - [x] Health: `/health/live`, `/health/ready` (SQL, Redis)
-  - [ ] Options pattern, per-environment config, User Secrets locally
+  - [x] Options pattern, per-environment config, User Secrets locally
 - [ ] **1.3 Database**
   - [x] EF Core 10 SQL Server; one DbContext per module with its own schema
   - [x] Migrations per module, naming `0001_Init`
   - [x] Seed: platform roles (Identity). Vendor categories and business types move to their own modules' first migrations (Phases 9 and 8), so no module seeds another's data
   - [x] `EnableRetryOnFailure`, command timeout, NoTracking default for reads
 - [ ] **1.4 Building blocks**
-  - [ ] `Result<T>` and error types, `IClock`, `ICurrentUser`
-  - [ ] FluentValidation pipeline
-  - [ ] Cursor pagination helper
-  - [ ] Idempotency-key filter for POST
-  - [ ] Rate limiting (fixed window + per-user)
+  - [x] `Result<T>` and error types, `IClock` (.NET `TimeProvider`), `ICurrentUser`
+  - [x] FluentValidation pipeline
+  - [x] Cursor pagination helper
+  - [x] Idempotency-key filter for POST
+  - [x] Rate limiting (fixed window + per-user)
 
 ```bash
 dotnet new web -n RedStarVibe.Api

@@ -1,11 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!--
-    Shared, domain-free code used by every module (ADR-0001). It must never reference a module.
-    Slice 3: persistence conventions. Slice 4 adds Result<T>, validation, pagination, idempotency.
+    Shared, domain-free code with NO framework dependencies (ADR-0001), so any layer, including a module's
+    Domain, can use it: Result/Error, cursors, the current-user abstraction.
+    EF Core conventions live in BuildingBlocks.Persistence; ASP.NET Core pieces in BuildingBlocks.Web.
   -->
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
-  </ItemGroup>
-
 </Project>

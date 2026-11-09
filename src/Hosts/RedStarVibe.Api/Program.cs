@@ -2,8 +2,10 @@ using System.Globalization;
 using RedStarVibe.Api.Endpoints;
 using RedStarVibe.Api.Errors;
 using RedStarVibe.Api.Health;
+using RedStarVibe.Api.Infrastructure;
 using RedStarVibe.Api.Observability;
 using RedStarVibe.Api.OpenApi;
+using RedStarVibe.BuildingBlocks.Web;
 using RedStarVibe.Modules.Identity.Endpoints;
 using Serilog;
 
@@ -23,6 +25,8 @@ try
     // ---------- Services ----------
     builder.AddApiLogging();
     builder.Services.AddApiErrorHandling();
+    builder.Services.AddApiRedis(builder.Configuration);
+    builder.Services.AddBuildingBlocksWeb(builder.Configuration);   // current user, rate limiting, idempotency
     builder.Services.AddApiHealthChecks(builder.Configuration);
     builder.Services.AddApiDocs();
 
@@ -50,6 +54,7 @@ try
     }
 
     app.UseHttpsRedirection();
+    app.UseBuildingBlocksWeb();                     // rate limiting, then idempotency keys
 
     // ---------- Endpoints ----------
     app.MapApiHealthChecks();   // /health/live, /health/ready (unversioned: they're for infrastructure, not clients)

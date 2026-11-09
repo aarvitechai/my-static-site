@@ -51,6 +51,9 @@ dotnet_naming_style.underscore_camel.capitalization = camel_case
 dotnet_diagnostic.IDE0005.severity = suggestion
 # ASP.NET Core has no SynchronizationContext; ConfigureAwait(false) adds noise in app code.
 dotnet_diagnostic.CA2007.severity = none
+# CA1716 flags names that are keywords in *other* .NET languages (e.g. "Error" in Visual Basic).
+# This is a C#-only codebase, and "Error" is the clearest name for our result error type.
+dotnet_diagnostic.CA1716.severity = none
 
 # EF Core migrations are generated code; don't lint them.
 [**/Migrations/**.cs]

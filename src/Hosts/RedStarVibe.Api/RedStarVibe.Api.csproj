@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <!-- Modules: the host references only each module's Endpoints project. -->
+    <ProjectReference Include="..\..\BuildingBlocks\RedStarVibe.BuildingBlocks.Web\RedStarVibe.BuildingBlocks.Web.csproj" />
     <ProjectReference Include="..\..\Modules\Identity\RedStarVibe.Modules.Identity.Endpoints\RedStarVibe.Modules.Identity.Endpoints.csproj" />
   </ItemGroup>
 

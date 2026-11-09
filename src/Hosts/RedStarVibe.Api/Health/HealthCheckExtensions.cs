@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using StackExchange.Redis;
 
 namespace RedStarVibe.Api.Health;
 
@@ -19,7 +20,8 @@ internal static class HealthCheckExtensions
     {
         services.AddHealthChecks()
             .AddSqlServer(RequiredConnectionString(configuration, "Sql"), name: "sqlserver", tags: [ReadyTag], timeout: CheckTimeout)
-            .AddRedis(RequiredConnectionString(configuration, "Redis"), name: "redis", tags: [ReadyTag], timeout: CheckTimeout);
+            // Reuses the app's shared Redis connection (RedisSetup) instead of opening a second one.
+            .AddRedis(sp => sp.GetRequiredService<IConnectionMultiplexer>(), name: "redis", tags: [ReadyTag], timeout: CheckTimeout);
 
         return services;
     }

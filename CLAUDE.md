@@ -24,7 +24,7 @@ to learn production skills. The full roadmap is in [`plan.md`](plan.md) and is t
   1. ✅ Restructure: `RedStarVibe.slnx`, `src/Hosts/RedStarVibe.Api`, `/api/v1/ping`, `web/`, CI (`ci.yml`)
   2. ✅ ProblemDetails errors, correlation ID, Serilog → Seq, OpenAPI + Scalar, `/health/live` + `/health/ready`
   3. ✅ Identity module (Domain/Infrastructure/Endpoints), `IdentityModuleDbContext` (ASP.NET Identity, Guid keys) in schema `identity`, migration `0001_Init`, 5 roles seeded, retry/timeout/NoTracking via BuildingBlocks
-  4. BuildingBlocks: `Result<T>`, FluentValidation pipeline, cursor pagination, idempotency keys, rate limiting
+  4. ✅ BuildingBlocks: `Result<T>`, FluentValidation pipeline, cursor pagination, idempotency keys, rate limiting, `ICurrentUser`; 34 tests
   5. Tests: architecture tests (NetArchTest) + Testcontainers SQL Server integration test running in CI
 - Decisions already made: SQL Server only (no SQLite); the old Products scaffold was removed (in git history before Phase 1).
 
@@ -65,6 +65,14 @@ web/                           React 19 + TypeScript + Vite; vite.config.ts prox
 Module layout: `src/Modules/<Name>/RedStarVibe.Modules.<Name>.{Domain,Application,Infrastructure,Endpoints,Contracts}/`
 (add Application/Contracts only when the module gets its first use case or public contract).
 - The host references **only** a module's `Endpoints` project, which exposes `Add<Name>Module(services, config)` and `Use<Name>ModuleAsync(app)`.
+- BuildingBlocks is split so Domain code never pulls in frameworks:
+  - `RedStarVibe.BuildingBlocks`: no dependencies. `Result`/`Result<T>`/`Error` (use `Result.Success(x)`, `return error;`),
+    `Cursor` + `CursorPagination` (keyset on CreatedAt DESC, Id DESC; fetch limit+1), `ICurrentUser`.
+  - `RedStarVibe.BuildingBlocks.Persistence`: EF Core conventions (`UseModuleSqlServer`).
+  - `RedStarVibe.BuildingBlocks.Web`: endpoint helpers. Use them on every new endpoint:
+    `.WithValidation<TRequest>()` (FluentValidation -> 400), `result.Match(TypedResults.Ok)` (Error -> ProblemDetails with `code`),
+    `.RequireIdempotencyKey()` on every create/POST, `.RequireRateLimiting(RateLimitPolicies.Strict)` on login/register/reset.
+  - Inside `RedStarVibe.BuildingBlocks.*` namespaces, write `Microsoft.AspNetCore.Http.Results`: plain `Results` resolves to our namespace.
 - Each module's DbContext uses `UseModuleSqlServer(connectionString, schema)` from `src/BuildingBlocks` (retries, 30 s timeout,
   NoTracking default, migrations history inside the module schema) and has an `IDesignTimeDbContextFactory` so `dotnet ef`
   works without starting the API.
@@ -83,7 +91,7 @@ Backend (repo root):
 ```bash
 dotnet build                                                        # whole solution, must be 0 warnings
 dotnet run --project src/Hosts/RedStarVibe.Api --launch-profile http   # http://localhost:5080
-dotnet test
+dotnet test --solution RedStarVibe.slnx     # xUnit v3 on Microsoft.Testing.Platform (global.json); plain `dotnet test X.slnx` fails
 ```
 
 Migrations (repo root; one set per module; always rebuild before `--no-build` checks):
@@ -111,6 +119,8 @@ npm run lint
   (`E:\Practice\RealAIProject\RedStarVibeProject\RedStarVibe`) uses that name, and sharing a name shares containers and
   volumes (it already happened once with its `redis-data` volume). Never run `docker compose down -v` or `--remove-orphans`
   without checking `docker compose ps` first.
+- Rate limit: 120 requests/min per user or IP (`RateLimiting` config section, validated at startup); hitting it locally
+  blocks the web dev proxy for up to a minute. Redis is one shared `IConnectionMultiplexer` (health check + idempotency).
 - Ports: API 5080 (http) / 7080 (https), Vite 5173. `AllowedHosts` is `localhost` (host-header filtering); production overrides it.
 - API config: `ConnectionStrings:Sql` in `appsettings.Development.json` (Windows auth, database `RedStarVibe`);
   `ConnectionStrings:Redis` (contains the password) only in **User Secrets** (`dotnet user-secrets list --project src/Hosts/RedStarVibe.Api`).
