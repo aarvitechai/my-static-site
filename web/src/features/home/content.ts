@@ -131,3 +131,84 @@ export const TRUST_POINTS: TrustPoint[] = [
     text: 'Direct messages and private posts are never indexed for search or used by the assistant. We don’t sell your data.',
   },
 ]
+
+export interface Category {
+  icon: IconName
+  name: string
+  examples: string
+}
+
+// Vendor categories from plan.md Phase 9.1.
+export const CATEGORIES: Category[] = [
+  { icon: 'utensils', name: 'Catering', examples: 'Veg & non-veg, live counters, per-plate packages' },
+  { icon: 'camera', name: 'Photo & video', examples: 'Candid, traditional, drone, pre-wedding shoots' },
+  { icon: 'tent', name: 'Tent & decor', examples: 'Mandaps, stage, lighting, floral themes' },
+  { icon: 'brush', name: 'Makeup & mehndi', examples: 'Bridal makeup, hair, mehndi artists' },
+  { icon: 'music', name: 'DJ & music', examples: 'DJs, dhol, live bands, sound & light' },
+  { icon: 'venue', name: 'Venues', examples: 'Banquet halls, lawns, farmhouses, rooftops' },
+  { icon: 'car', name: 'Vehicles', examples: 'Wedding cars, guest transfers, vintage rides' },
+  { icon: 'shirt', name: 'Boutiques', examples: 'Lehengas, sherwanis, tailoring, rentals' },
+]
+
+export interface RoadmapStage {
+  stage: 'Now' | 'Next' | 'Later'
+  title: string
+  items: string[]
+}
+
+// Honest public roadmap, mirrored from plan.md phases. Update as phases complete.
+export const ROADMAP: RoadmapStage[] = [
+  {
+    stage: 'Now',
+    title: 'Foundations',
+    items: ['Secure, versioned API', 'Accounts with modern login security', 'Privacy rules enforced in the database'],
+  },
+  {
+    stage: 'Next',
+    title: 'MVP launch',
+    items: ['Profiles, posts and the feed', 'Local business pages and “near me”', 'Vendor enquiries, quotes and bookings', 'Events with RSVPs and reminders'],
+  },
+  {
+    stage: 'Later',
+    title: 'After launch',
+    items: ['Wedding planner workspace', 'Chat and notifications', 'Smart assistant', 'Payments and ticketing'],
+  },
+]
+
+export interface Faq {
+  question: string
+  answer: string
+}
+
+export const FAQS: Faq[] = [
+  {
+    question: 'Is Red Star Vibe free?',
+    answer:
+      'Yes for people: following, posting, events and finding vendors are free. Businesses and vendors start free too; optional paid plans with extra tools may come later.',
+  },
+  {
+    question: 'When and where does it launch?',
+    answer:
+      'The beta opens city by city, starting with local businesses and wedding vendors so there’s something great to discover on day one. Everyone else joins right after.',
+  },
+  {
+    question: 'How do you prevent double bookings?',
+    answer:
+      'Each vendor’s calendar is protected by the database itself: a date can only be confirmed once, even if two people try to book it at the same moment.',
+  },
+  {
+    question: 'How are vendors and businesses verified?',
+    answer:
+      'Partners verify their phone number and documents before an admin approves them for a Verified badge. Reviews can only be written after a real, completed booking.',
+  },
+  {
+    question: 'What happens to my private messages and posts?',
+    answer:
+      'They stay private. Direct messages and private posts are never indexed for search, never used by the smart assistant, and never sold.',
+  },
+  {
+    question: 'I run a shop or a vendor business. How do I join?',
+    answer:
+      'Business and vendor sign-ups open first in the beta. Setup is a short step-by-step wizard: category, details, location, hours, photos, and you’re live.',
+  },
+]

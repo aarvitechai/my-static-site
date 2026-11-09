@@ -1,5 +1,5 @@
 import { Icon } from '../../components/Icon'
-import { AUDIENCES, PILLARS, STEPS, TRUST_POINTS } from './content'
+import { AUDIENCES, CATEGORIES, FAQS, PILLARS, ROADMAP, STEPS, TRUST_POINTS } from './content'
 import './home.css'
 
 const GITHUB_URL = 'https://github.com/aarvitechai/my-static-site'
@@ -8,10 +8,13 @@ export function HomePage() {
   return (
     <>
       <Hero />
+      <Categories />
       <Features />
       <Audiences />
       <HowItWorks />
       <Trust />
+      <Roadmap />
+      <FaqSection />
       <JoinCta />
     </>
   )
@@ -40,6 +43,15 @@ function Hero() {
               See what’s inside
             </a>
           </div>
+          <nav className="hero-quick" aria-label="Popular categories">
+            <span>Popular:</span>
+            {CATEGORIES.slice(0, 4).map((c) => (
+              <a key={c.name} href="#categories" className="chip">
+                <Icon name={c.icon} size={16} />
+                {c.name}
+              </a>
+            ))}
+          </nav>
           <ul className="hero-proof" aria-label="Highlights">
             <li>
               <Icon name="check" size={18} /> Verified vendors
@@ -102,6 +114,36 @@ function Hero() {
   )
 }
 
+function Categories() {
+  return (
+    <section id="categories" className="section section-tint" aria-labelledby="categories-title">
+      <div className="container">
+        <div className="section-head">
+          <p className="eyebrow">Vendors for every occasion</p>
+          <h2 id="categories-title">Everyone you need, in one marketplace</h2>
+          <p>
+            Compare packages, check real availability and get quotes from local vendors, without forty phone calls.
+          </p>
+        </div>
+
+        <ul className="category-grid">
+          {CATEGORIES.map((category) => (
+            <li key={category.name} className="category">
+              <div className="card-icon">
+                <Icon name={category.icon} />
+              </div>
+              <div>
+                <h3>{category.name}</h3>
+                <p>{category.examples}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
 function Features() {
   return (
     <section id="features" className="section" aria-labelledby="features-title">
@@ -144,7 +186,7 @@ function Features() {
 
 function Audiences() {
   return (
-    <section id="for-you" className="section section-tint" aria-labelledby="audiences-title">
+    <section id="for-you" className="section" aria-labelledby="audiences-title">
       <div className="container">
         <div className="section-head">
           <p className="eyebrow">Who it’s for</p>
@@ -178,7 +220,7 @@ function Audiences() {
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="section" aria-labelledby="how-title">
+    <section id="how-it-works" className="section section-tint" aria-labelledby="how-title">
       <div className="container">
         <div className="section-head">
           <p className="eyebrow">How it works</p>
@@ -206,7 +248,7 @@ function HowItWorks() {
 
 function Trust() {
   return (
-    <section id="trust" className="section section-tint" aria-labelledby="trust-title">
+    <section id="trust" className="section" aria-labelledby="trust-title">
       <div className="container trust-grid">
         <div className="section-head">
           <p className="eyebrow">Trust &amp; safety</p>
@@ -230,6 +272,64 @@ function Trust() {
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+  )
+}
+
+function Roadmap() {
+  return (
+    <section id="roadmap" className="section" aria-labelledby="roadmap-title">
+      <div className="container">
+        <div className="section-head">
+          <p className="eyebrow">Built in the open</p>
+          <h2 id="roadmap-title">What we’re building, and when</h2>
+          <p>No vapourware. Here’s exactly where Red Star Vibe is today and what comes next.</p>
+        </div>
+
+        <ol className="roadmap">
+          {ROADMAP.map((stage) => (
+            <li key={stage.stage} className={`roadmap-stage stage-${stage.stage.toLowerCase()}`}>
+              <p className="stage-label">{stage.stage}</p>
+              <h3>{stage.title}</h3>
+              <ul className="check-list">
+                {stage.items.map((item) => (
+                  <li key={item}>
+                    <Icon name={stage.stage === 'Now' ? 'check' : 'arrow'} size={16} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+function FaqSection() {
+  return (
+    <section id="faq" className="section section-tint" aria-labelledby="faq-title">
+      <div className="container faq-grid">
+        <div className="section-head">
+          <p className="eyebrow">FAQ</p>
+          <h2 id="faq-title">Questions, answered</h2>
+          <p>Can’t find what you’re looking for? Follow the build on GitHub and open a discussion.</p>
+        </div>
+
+        {/* <details> is an accessible accordion with no JavaScript: keyboard and screen-reader support built in. */}
+        <div className="faq-list">
+          {FAQS.map((faq) => (
+            <details key={faq.question} className="faq">
+              <summary>
+                {faq.question}
+                <Icon name="chevron" size={20} className="faq-chevron" />
+              </summary>
+              <p>{faq.answer}</p>
+            </details>
+          ))}
+        </div>
       </div>
     </section>
   )

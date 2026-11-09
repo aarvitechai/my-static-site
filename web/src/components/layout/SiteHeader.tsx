@@ -3,10 +3,11 @@ import { Icon } from '../Icon'
 import './layout.css'
 
 const NAV_LINKS = [
+  { href: '#categories', label: 'Vendors' },
   { href: '#features', label: 'Features' },
-  { href: '#for-you', label: 'Who it’s for' },
   { href: '#how-it-works', label: 'How it works' },
-  { href: '#trust', label: 'Trust & safety' },
+  { href: '#roadmap', label: 'Roadmap' },
+  { href: '#faq', label: 'FAQ' },
 ]
 
 export function Logo() {

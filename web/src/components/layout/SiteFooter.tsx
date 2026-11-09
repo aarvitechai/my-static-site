@@ -9,12 +9,14 @@ const COLUMNS = [
       { href: '#features', label: 'Features' },
       { href: '#how-it-works', label: 'How it works' },
       { href: '#trust', label: 'Trust & safety' },
+      { href: '#roadmap', label: 'Roadmap' },
+      { href: '#faq', label: 'FAQ' },
     ],
   },
   {
     title: 'For partners',
     links: [
-      { href: '#for-you', label: 'Vendors' },
+      { href: '#categories', label: 'Vendor categories' },
       { href: '#for-you', label: 'Local businesses' },
       { href: '#join', label: 'Join the beta' },
     ],
