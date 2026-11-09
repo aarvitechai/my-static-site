@@ -1,4 +1,4 @@
-# RedStarVibe: React 19 + .NET 10 + SQL Server
+# Red Star Vibe: React 19 + .NET 10 + SQL Server
 
 > Social platform + Events + Weddings + Vendor marketplace + Local business growth.
 > Goal: build it phase by phase, learn each production skill, ship something real.

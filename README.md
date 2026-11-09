@@ -1,4 +1,4 @@
-# RedStarVibe (learning build): React + ASP.NET Core
+# Red Star Vibe: React + ASP.NET Core
 
 Roadmap: [`plan.md`](plan.md) · Decisions: [`docs/adr/`](docs/adr/) · Product: [`docs/product/`](docs/product/) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
@@ -17,7 +17,7 @@ Two independent projects in one repository:
 | [`backend/`](backend/)     | ASP.NET Core Web API (.NET 10), EF Core | `cd backend && dotnet run --project Api --launch-profile http` → :5121 |
 
 Each folder has its own README, dependencies and `.gitignore`, and can be opened on its own
-(VS Code for `frontend/`, Visual Studio for `backend/LearningApp.slnx`).
+(VS Code for `frontend/`, Visual Studio for `backend/RedStarVibe.slnx`).
 
 They talk over HTTP only: in development Vite proxies `/api/*` to the backend.
 

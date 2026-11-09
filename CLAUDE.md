@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## Project
 
-**RedStarVibe**: a social platform with events, weddings, a vendor marketplace and local-business pages,
+**Red Star Vibe**: a social platform with events, weddings, a vendor marketplace and local-business pages,
 built with React 19 + .NET 10 + SQL Server. It is a **learning project**: the owner builds it phase by phase
 to learn production skills. The full roadmap is in [`plan.md`](plan.md) and is the source of truth for scope.
 
@@ -56,7 +56,7 @@ frontend/                      React 19 + TypeScript + Vite
   src/components/Products.tsx
   vite.config.ts               dev proxy: /api -> http://localhost:5121
 backend/
-  LearningApp.slnx
+  RedStarVibe.slnx
   Api/
     Controllers/ Dtos/ Models/ Services/    layered: controller -> IProductService -> EF Core
     Data/          AppDbContext + SqlServerDbContext / SqliteDbContext, provider switch, design-time factories
@@ -120,6 +120,9 @@ In Development the API runs `Database.Migrate()` on startup.
 
 ## Conventions
 
+- **Naming:** "Red Star Vibe" in anything people read (titles, docs, UI). `RedStarVibe` for .NET identifiers
+  (solution, projects, namespaces such as `RedStarVibe.Modules.Identity`, database name). `red-star-vibe` for npm, URLs and
+  Docker image names. The compose project stays `rsv-learning` (see Environment).
 - C#: nullable enabled, file-scoped namespaces, primary constructors for DI, async all the way for I/O.
 - Keep the build at **0 warnings**. If a NuGet vulnerability warning appears, pin a patched version rather than suppress it.
 - TypeScript: strict (on by default in TS 6, no flag in `tsconfig.app.json`); keep the API client typed; frontend calls relative `/api/...` paths in dev.

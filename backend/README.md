@@ -6,12 +6,12 @@
 dotnet run --project Api --launch-profile http     # http://localhost:5121
 ```
 
-Open `LearningApp.slnx` in Visual Studio / Rider, or use `Api/Api.http` to send test requests.
+Open `RedStarVibe.slnx` in Visual Studio / Rider, or use `Api/Api.http` to send test requests.
 
 ## Structure
 
 ```
-LearningApp.slnx         solution file
+RedStarVibe.slnx         solution file
 Api/
 ├── Controllers/         HTTP endpoints (ProductsController, HealthController)
 ├── Dtos/                request/response shapes

@@ -4,7 +4,7 @@
 - **Date:** 2026-11-09
 
 ## Context
-RedStarVibe spans many domains (social, chat, events, weddings, vendors, business, bookings, search, AI).
+Red Star Vibe spans many domains (social, chat, events, weddings, vendors, business, bookings, search, AI).
 It is built by one developer at about 10-12 hours a week. Microservices would add network failure modes,
 distributed transactions, per-service deployment and observability overhead before there are any users.
 A plain monolith tends to rot into a "big ball of mud" where everything reads everything.

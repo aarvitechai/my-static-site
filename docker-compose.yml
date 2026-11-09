@@ -1,4 +1,4 @@
-# Local development services for RedStarVibe.
+# Local development services for Red Star Vibe.
 #   docker compose up -d        start everything
 #   docker compose ps           check health
 #   docker compose down         stop (data kept in named volumes)
