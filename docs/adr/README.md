@@ -11,5 +11,6 @@ ADRs are immutable once **Accepted**. To change a decision, write a new ADR that
 | [004](0004-search-full-text-plus-vectors.md) | Search: SQL Server full-text + vector, hybrid ranking | Accepted |
 | [005](0005-react-spa-with-ssr-public-pages.md) | React SPA for the app, SSR only for public SEO pages | Accepted |
 | [006](0006-local-dev-services.md) | Local dev services: Docker for Redis/Seq/Mailpit, local SQL Server | Accepted |
+| [007](0007-frontend-hosting-cloudflare-pages.md) | Host the web app on Cloudflare Pages | Accepted |
 
 New ADR: copy [`template.md`](template.md) to `NNNN-short-title.md` and add a row above.

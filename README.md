@@ -28,4 +28,5 @@ In development Vite proxies `/api/*` to the API, so the browser and API share an
 
 ## CI/CD
 - `.github/workflows/ci.yml`: build (warnings are errors), NuGet and npm vulnerability audit, lint, tests, on PRs into `dev` / `staging` / `production`.
-- `.github/workflows/deploy.yml`: deploys `web/` to GitHub Pages on pushes to `production`.
+- **Hosting: Cloudflare Pages** ([ADR-0007](docs/adr/0007-frontend-hosting-cloudflare-pages.md)) builds `web/` from GitHub:
+  `production` → live site, `dev` and `staging` → preview URLs. Security headers live in `web/public/_headers`.

@@ -45,8 +45,9 @@ Fill in the PR template, including the security checklist.
 | Block force pushes and deletion | ✅ | ✅ | ✅ | ✅ |
 | Restrict who can push / lock branch | | | ✅ | ✅ lock (read-only) |
 
-- Settings → Environments → `github-pages` → Deployment branches: allow **`production`** (it only allows `main` by default).
-  Add required reviewers on that environment for a manual approval before each production deploy.
+- Hosting is Cloudflare Pages (ADR-0007): set production branch `production` and preview branches `dev`, `staging` in
+  Cloudflare → Workers & Pages → project → Settings → Builds. Because Cloudflare deploys on push, the approval gate is the
+  required review on the `staging` → `production` PR.
 
 Also enable: Settings → Code security → **Dependabot alerts**, **Secret scanning + push protection**, **Private vulnerability reporting**.
 

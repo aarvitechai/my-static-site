@@ -21,6 +21,10 @@ export default function ApiStatus() {
     fetch(PING_URL, { signal: controller.signal, headers: { Accept: 'application/json' } })
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        // Static hosts (Cloudflare Pages) answer unknown paths with index.html, so a 200 isn't proof the API exists.
+        if (!res.headers.get('content-type')?.includes('application/json')) {
+          throw new Error('no API at this address')
+        }
         const body = (await res.json()) as PingResponse
         setStatus({ state: 'up', serverTime: new Date(body.serverTimeUtc).toLocaleTimeString() })
       })
