@@ -31,7 +31,8 @@ src/
   BuildingBlocks/             shared code: Result/Error, cursors, current user (no deps); .Persistence (EF);
                               .Web (validation, idempotency keys, rate limiting, Result -> HTTP)
   Modules/Identity/           first module: users and roles (schema `identity`, migration 0001_Init)
-tests/                        BuildingBlocks tests (run: dotnet test --solution RedStarVibe.slnx); more in slice 5
+tests/                        unit, architecture and integration tests: dotnet test --solution RedStarVibe.slnx
+                              (integration tests start SQL Server + Redis in Docker via Testcontainers)
 web/                          React 19 + TypeScript + Vite
 docs/                         ADRs, product docs
 ```

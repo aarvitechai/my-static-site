@@ -9,14 +9,10 @@ internal static class RedisSetup
     /// reused; creating one per request would exhaust sockets. abortConnect=false (in the connection string) lets the
     /// app start while Redis is down; /health/ready reports it instead.
     /// </summary>
-    public static IServiceCollection AddApiRedis(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddApiRedis(this IServiceCollection services)
     {
-        var connectionString = configuration.GetConnectionString("Redis") is { Length: > 0 } value
-            ? value
-            : throw new InvalidOperationException(
-                "Connection string 'Redis' is not configured. See README: set it with dotnet user-secrets.");
-
-        services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(connectionString));
+        services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(sp.GetRequiredService<IConfiguration>().GetRequiredConnectionString("Redis")));
         return services;
     }
 }

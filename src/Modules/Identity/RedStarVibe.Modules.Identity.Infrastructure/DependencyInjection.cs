@@ -7,11 +7,14 @@ namespace RedStarVibe.Modules.Identity.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, string connectionString)
+    /// <param name="connectionString">Resolved when the DbContext is first created, so configuration can still be overridden (e.g. by tests).</param>
+    public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services, Func<IServiceProvider, string> connectionString)
     {
+        ArgumentNullException.ThrowIfNull(connectionString);
+
         // Scoped (one DbContext per request) by default: DbContext isn't thread-safe and is meant to be short-lived.
-        services.AddDbContext<IdentityModuleDbContext>(options =>
-            options.UseModuleSqlServer(connectionString, IdentityModuleDbContext.Schema));
+        services.AddDbContext<IdentityModuleDbContext>((sp, options) =>
+            options.UseModuleSqlServer(connectionString(sp), IdentityModuleDbContext.Schema));
 
         return services;
     }

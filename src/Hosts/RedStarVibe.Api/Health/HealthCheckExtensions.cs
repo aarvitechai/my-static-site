@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using RedStarVibe.Api.Infrastructure;
 using StackExchange.Redis;
 
 namespace RedStarVibe.Api.Health;
@@ -16,10 +17,10 @@ internal static class HealthCheckExtensions
     /// Readiness (/health/ready): can it serve traffic? Checks SQL Server and Redis; a load balancer stops
     ///                            sending requests to an instance that isn't ready.
     /// </summary>
-    public static IServiceCollection AddApiHealthChecks(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddApiHealthChecks(this IServiceCollection services)
     {
         services.AddHealthChecks()
-            .AddSqlServer(RequiredConnectionString(configuration, "Sql"), name: "sqlserver", tags: [ReadyTag], timeout: CheckTimeout)
+            .AddSqlServer(sp => sp.GetRequiredService<IConfiguration>().GetRequiredConnectionString("Sql"), name: "sqlserver", tags: [ReadyTag], timeout: CheckTimeout)
             // Reuses the app's shared Redis connection (RedisSetup) instead of opening a second one.
             .AddRedis(sp => sp.GetRequiredService<IConnectionMultiplexer>(), name: "redis", tags: [ReadyTag], timeout: CheckTimeout);
 
@@ -42,13 +43,6 @@ internal static class HealthCheckExtensions
 
         return endpoints;
     }
-
-    // Fail at startup with a clear message instead of failing on the first request.
-    private static string RequiredConnectionString(IConfiguration configuration, string name) =>
-        configuration.GetConnectionString(name) is { Length: > 0 } value
-            ? value
-            : throw new InvalidOperationException(
-                $"Connection string '{name}' is not configured. See README: set it in appsettings.Development.json or with dotnet user-secrets.");
 
     // Names, statuses and timings only. Exception messages stay in the logs: they can expose
     // server names, ports or credentials to anyone who can reach the endpoint.

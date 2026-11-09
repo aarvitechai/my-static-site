@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Enforces ADR-0001's boundaries by checking which assemblies each assembly references.
+    Every layer is its own assembly, so assembly references ARE the architecture.
+    (NetArchTest, named in plan.md, has had no release since 2021, so plain reflection is used instead.)
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The host references everything, so all RedStarVibe assemblies are copied next to the tests. -->
+    <ProjectReference Include="..\..\src\Hosts\RedStarVibe.Api\RedStarVibe.Api.csproj" />
+  </ItemGroup>
+
+</Project>

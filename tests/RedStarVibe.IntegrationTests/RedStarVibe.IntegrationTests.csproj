@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Runs the real API against real SQL Server and Redis, started in throwaway Docker containers by Testcontainers.
+    Needs Docker (Docker Desktop locally; GitHub's ubuntu runners have it).
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="Testcontainers.Redis" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Hosts\RedStarVibe.Api\RedStarVibe.Api.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\RedStarVibe.Modules.Identity.Infrastructure\RedStarVibe.Modules.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\RedStarVibe.BuildingBlocks.Web\RedStarVibe.BuildingBlocks.Web.csproj" />
+  </ItemGroup>
+
+</Project>

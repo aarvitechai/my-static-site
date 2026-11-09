@@ -25,19 +25,22 @@ try
     // ---------- Services ----------
     builder.AddApiLogging();
     builder.Services.AddApiErrorHandling();
-    builder.Services.AddApiRedis(builder.Configuration);
+    builder.Services.AddApiRedis();
     builder.Services.AddBuildingBlocksWeb(builder.Configuration);   // current user, rate limiting, idempotency
-    builder.Services.AddApiHealthChecks(builder.Configuration);
+    builder.Services.AddApiHealthChecks();
     builder.Services.AddApiDocs();
 
     // ---------- Modules (ADR-0001) ----------
-    builder.Services.AddIdentityModule(builder.Configuration);
+    builder.Services.AddIdentityModule();
 
     // TimeProvider is .NET's built-in, testable clock: inject it instead of calling DateTime.UtcNow,
     // so tests can control time. (plan.md calls this IClock.)
     builder.Services.AddSingleton(TimeProvider.System);
 
     var app = builder.Build();
+
+    // Fail fast with a clear message if a connection string is missing (services read them lazily).
+    app.EnsureRequiredConfiguration();
 
     // Module startup work (Development: apply pending migrations before taking traffic).
     await app.UseIdentityModuleAsync();

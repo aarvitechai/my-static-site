@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="RedStarVibe.BuildingBlocks.Tests" />
+    <InternalsVisibleTo Include="RedStarVibe.IntegrationTests" />
   </ItemGroup>
 
 </Project>

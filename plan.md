@@ -130,20 +130,20 @@ docker compose up -d
 
 - [ ] **1.1 Solution**
   - [ ] Create projects per module (Domain, Application, Infrastructure, Endpoints) (Identity: Domain, Infrastructure, Endpoints done; Application/Contracts added with the first use case in Phase 2)
-  - [ ] Add architecture tests (NetArchTest): no cross-module internals
-- [ ] **1.2 API host**
+  - [x] Add architecture tests: no cross-module internals (`tests/RedStarVibe.ArchitectureTests`; assembly-reference rules via reflection, since NetArchTest has had no release since 2021)
+- [x] **1.2 API host**
   - [x] Minimal API + endpoint groups under `/api/v1`
   - [x] OpenAPI + Scalar UI
   - [x] Global exception handler returning ProblemDetails
   - [x] Correlation-ID middleware, Serilog to Seq
   - [x] Health: `/health/live`, `/health/ready` (SQL, Redis)
   - [x] Options pattern, per-environment config, User Secrets locally
-- [ ] **1.3 Database**
+- [x] **1.3 Database**
   - [x] EF Core 10 SQL Server; one DbContext per module with its own schema
   - [x] Migrations per module, naming `0001_Init`
   - [x] Seed: platform roles (Identity). Vendor categories and business types move to their own modules' first migrations (Phases 9 and 8), so no module seeds another's data
   - [x] `EnableRetryOnFailure`, command timeout, NoTracking default for reads
-- [ ] **1.4 Building blocks**
+- [x] **1.4 Building blocks**
   - [x] `Result<T>` and error types, `IClock` (.NET `TimeProvider`), `ICurrentUser`
   - [x] FluentValidation pipeline
   - [x] Cursor pagination helper

@@ -25,7 +25,7 @@ to learn production skills. The full roadmap is in [`plan.md`](plan.md) and is t
   2. ✅ ProblemDetails errors, correlation ID, Serilog → Seq, OpenAPI + Scalar, `/health/live` + `/health/ready`
   3. ✅ Identity module (Domain/Infrastructure/Endpoints), `IdentityModuleDbContext` (ASP.NET Identity, Guid keys) in schema `identity`, migration `0001_Init`, 5 roles seeded, retry/timeout/NoTracking via BuildingBlocks
   4. ✅ BuildingBlocks: `Result<T>`, FluentValidation pipeline, cursor pagination, idempotency keys, rate limiting, `ICurrentUser`; 34 tests
-  5. Tests: architecture tests (NetArchTest) + Testcontainers SQL Server integration test running in CI
+  5. ✅ Tests: architecture rules (assembly references) + Testcontainers SQL Server 2025 / Redis integration tests in CI; 52 tests total
 - Decisions already made: SQL Server only (no SQLite); the old Products scaffold was removed (in git history before Phase 1).
 
 ## Current state vs target
@@ -92,6 +92,14 @@ Backend (repo root):
 dotnet build                                                        # whole solution, must be 0 warnings
 dotnet run --project src/Hosts/RedStarVibe.Api --launch-profile http   # http://localhost:5080
 dotnet test --solution RedStarVibe.slnx     # xUnit v3 on Microsoft.Testing.Platform (global.json); plain `dotnet test X.slnx` fails
+dotnet test --project tests/RedStarVibe.ArchitectureTests   # fast; run after adding a module or project reference
+```
+Test projects: `BuildingBlocks.Tests` (unit + in-memory TestServer), `ArchitectureTests` (ADR-0001 rules: Domain has no EF/ASP.NET,
+layers point inward, modules only use other modules' Contracts, host only references `*.Endpoints`), `IntegrationTests`
+(real API via WebApplicationFactory against Testcontainers SQL Server `2025-CU10-ubuntu-22.04` + `redis:7.4-alpine`; needs Docker;
+each test gets a fresh database; runs sequentially because Serilog's bootstrap logger is static).
+New modules must keep the architecture tests green; a new rule needs a deliberate failing case to prove it works.
+```bash
 ```
 
 Migrations (repo root; one set per module; always rebuild before `--no-build` checks):
@@ -122,6 +130,8 @@ npm run lint
 - Rate limit: 120 requests/min per user or IP (`RateLimiting` config section, validated at startup); hitting it locally
   blocks the web dev proxy for up to a minute. Redis is one shared `IConnectionMultiplexer` (health check + idempotency).
 - Ports: API 5080 (http) / 7080 (https), Vite 5173. `AllowedHosts` is `localhost` (host-header filtering); production overrides it.
+- Connection strings are read lazily (when a service is first created) so tests can override them; `EnsureRequiredConfiguration()`
+  still fails startup if one is missing. Never read config while registering services.
 - API config: `ConnectionStrings:Sql` in `appsettings.Development.json` (Windows auth, database `RedStarVibe`);
   `ConnectionStrings:Redis` (contains the password) only in **User Secrets** (`dotnet user-secrets list --project src/Hosts/RedStarVibe.Api`).
   The API refuses to start if either is missing. Serilog sinks/levels are in the `Serilog` config section; Development also logs to Seq (:5341).

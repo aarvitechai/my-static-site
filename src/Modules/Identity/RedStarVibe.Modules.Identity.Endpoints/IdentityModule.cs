@@ -12,13 +12,12 @@ namespace RedStarVibe.Modules.Identity.Endpoints;
 /// </summary>
 public static class IdentityModule
 {
-    public static IServiceCollection AddIdentityModule(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddIdentityModule(this IServiceCollection services)
     {
-        var connectionString = configuration.GetConnectionString("Sql") is { Length: > 0 } value
-            ? value
-            : throw new InvalidOperationException("Connection string 'Sql' is not configured.");
-
-        services.AddIdentityInfrastructure(connectionString);
+        services.AddIdentityInfrastructure(sp =>
+            sp.GetRequiredService<IConfiguration>().GetConnectionString("Sql") is { Length: > 0 } value
+                ? value
+                : throw new InvalidOperationException("Connection string 'Sql' is not configured."));
         return services;
     }
 
