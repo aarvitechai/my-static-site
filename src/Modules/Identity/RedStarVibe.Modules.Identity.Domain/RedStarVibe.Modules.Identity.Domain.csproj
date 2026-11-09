@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Identity domain: users, roles and their rules. No EF Core, no ASP.NET Core.
+    It references only the Identity *stores* abstractions (the IdentityUser/IdentityRole base classes),
+    a pragmatic trade-off so ASP.NET Core Identity can manage passwords, lockout and tokens in Phase 2.
+  -->
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" />
+  </ItemGroup>
+
+</Project>

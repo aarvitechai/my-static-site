@@ -23,7 +23,7 @@ to learn production skills. The full roadmap is in [`plan.md`](plan.md) and is t
 - **Phase 1** (backend skeleton): **in progress**, built in 5 slices, each a PR into `dev`:
   1. ✅ Restructure: `RedStarVibe.slnx`, `src/Hosts/RedStarVibe.Api`, `/api/v1/ping`, `web/`, CI (`ci.yml`)
   2. ✅ ProblemDetails errors, correlation ID, Serilog → Seq, OpenAPI + Scalar, `/health/live` + `/health/ready`
-  3. First module (Identity) with its own DbContext + schema, migration `0001_Init`, seed data, retry/timeout
+  3. ✅ Identity module (Domain/Infrastructure/Endpoints), `IdentityModuleDbContext` (ASP.NET Identity, Guid keys) in schema `identity`, migration `0001_Init`, 5 roles seeded, retry/timeout/NoTracking via BuildingBlocks
   4. BuildingBlocks: `Result<T>`, FluentValidation pipeline, cursor pagination, idempotency keys, rate limiting
   5. Tests: architecture tests (NetArchTest) + Testcontainers SQL Server integration test running in CI
 - Decisions already made: SQL Server only (no SQLite); the old Products scaffold was removed (in git history before Phase 1).
@@ -62,7 +62,14 @@ src/Hosts/RedStarVibe.Api/
 web/                           React 19 + TypeScript + Vite; vite.config.ts proxies /api -> http://localhost:5080
 ```
 
-New module layout (from slice 3): `src/Modules/<Name>/RedStarVibe.Modules.<Name>.{Domain,Application,Infrastructure,Endpoints,Contracts}/`.
+Module layout: `src/Modules/<Name>/RedStarVibe.Modules.<Name>.{Domain,Application,Infrastructure,Endpoints,Contracts}/`
+(add Application/Contracts only when the module gets its first use case or public contract).
+- The host references **only** a module's `Endpoints` project, which exposes `Add<Name>Module(services, config)` and `Use<Name>ModuleAsync(app)`.
+- Each module's DbContext uses `UseModuleSqlServer(connectionString, schema)` from `src/BuildingBlocks` (retries, 30 s timeout,
+  NoTracking default, migrations history inside the module schema) and has an `IDesignTimeDbContextFactory` so `dotnet ef`
+  works without starting the API.
+- Development applies migrations at startup; other environments must run them as a separate step (never at app start).
+- Seed data uses `HasData` with fixed IDs and fixed concurrency stamps (otherwise every `migrations add` sees changes).
 
 ## Commands
 
@@ -78,6 +85,14 @@ dotnet build                                                        # whole solu
 dotnet run --project src/Hosts/RedStarVibe.Api --launch-profile http   # http://localhost:5080
 dotnet test
 ```
+
+Migrations (repo root; one set per module; always rebuild before `--no-build` checks):
+```bash
+dotnet ef migrations add 0002_<Name> --project src/Modules/Identity/RedStarVibe.Modules.Identity.Infrastructure   --startup-project src/Modules/Identity/RedStarVibe.Modules.Identity.Infrastructure --output-dir Persistence/Migrations
+dotnet ef migrations has-pending-model-changes --project src/Modules/Identity/RedStarVibe.Modules.Identity.Infrastructure
+```
+`sqlcmd` against these tables needs `-I` (QUOTED_IDENTIFIER on, required by filtered indexes), and `identity` is a SQL
+keyword, so write `[identity].[Users]`.
 
 Web (run in `web/`):
 ```bash
@@ -101,7 +116,8 @@ npm run lint
   `ConnectionStrings:Redis` (contains the password) only in **User Secrets** (`dotnet user-secrets list --project src/Hosts/RedStarVibe.Api`).
   The API refuses to start if either is missing. Serilog sinks/levels are in the `Serilog` config section; Development also logs to Seq (:5341).
 - Seq's API needs a login; the first login forces a password change, so automated log queries only work after the owner has done that.
-- An old `LearningAppDb` database from the removed scaffold may still exist on the local instance; it is unused.
+- Database `RedStarVibe` holds all module schemas (currently `identity`). An old `LearningAppDb` from the removed scaffold is unused.
+- `Directory.Packages.props` pins `System.Security.Cryptography.Pkcs` 10.0.14 transitively (SqlClient brings a vulnerable 9.0.11); remove the pin once SqlClient ships a fixed version.
 
 ## Architecture rules (from `plan.md`; apply to all new code)
 

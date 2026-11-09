@@ -4,6 +4,7 @@ using RedStarVibe.Api.Errors;
 using RedStarVibe.Api.Health;
 using RedStarVibe.Api.Observability;
 using RedStarVibe.Api.OpenApi;
+using RedStarVibe.Modules.Identity.Endpoints;
 using Serilog;
 
 // Bootstrap logger: captures errors that happen before configuration is loaded (e.g. a bad appsettings file).
@@ -25,11 +26,17 @@ try
     builder.Services.AddApiHealthChecks(builder.Configuration);
     builder.Services.AddApiDocs();
 
+    // ---------- Modules (ADR-0001) ----------
+    builder.Services.AddIdentityModule(builder.Configuration);
+
     // TimeProvider is .NET's built-in, testable clock: inject it instead of calling DateTime.UtcNow,
     // so tests can control time. (plan.md calls this IClock.)
     builder.Services.AddSingleton(TimeProvider.System);
 
     var app = builder.Build();
+
+    // Module startup work (Development: apply pending migrations before taking traffic).
+    await app.UseIdentityModuleAsync();
 
     // ---------- HTTP pipeline (order matters: each middleware wraps everything after it) ----------
     app.UseMiddleware<CorrelationIdMiddleware>();   // first, so every later log line carries the ID

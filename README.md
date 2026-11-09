@@ -28,8 +28,8 @@ SQL Server: local instance `DESKTOP-2ERCDGB\MSSQLSERVER01` (Windows auth). Reque
 RedStarVibe.slnx              .NET solution (open in Visual Studio / Rider)
 src/
   Hosts/RedStarVibe.Api/      HTTP API host (Minimal APIs under /api/v1)
-  BuildingBlocks/             shared, domain-free code (from Phase 1 slice 4)
-  Modules/                    one folder per module (from Phase 1 slice 3)
+  BuildingBlocks/             shared, domain-free code (persistence conventions; more in slice 4)
+  Modules/Identity/           first module: users and roles (schema `identity`, migration 0001_Init)
 tests/                        unit, integration, architecture tests (from Phase 1 slice 5)
 web/                          React 19 + TypeScript + Vite
 docs/                         ADRs, product docs

@@ -129,7 +129,7 @@ docker compose up -d
 **Goal:** a production-shaped API host with logging, errors, health, DB and tests.
 
 - [ ] **1.1 Solution**
-  - [ ] Create projects per module (Domain, Application, Infrastructure, Endpoints)
+  - [ ] Create projects per module (Domain, Application, Infrastructure, Endpoints) (Identity: Domain, Infrastructure, Endpoints done; Application/Contracts added with the first use case in Phase 2)
   - [ ] Add architecture tests (NetArchTest): no cross-module internals
 - [ ] **1.2 API host**
   - [x] Minimal API + endpoint groups under `/api/v1`
@@ -139,10 +139,10 @@ docker compose up -d
   - [x] Health: `/health/live`, `/health/ready` (SQL, Redis)
   - [ ] Options pattern, per-environment config, User Secrets locally
 - [ ] **1.3 Database**
-  - [ ] EF Core 10 SQL Server; one DbContext per module with its own schema
-  - [ ] Migrations per module, naming `0001_Init`
-  - [ ] Seed: vendor categories, business types
-  - [ ] `EnableRetryOnFailure`, command timeout, NoTracking default for reads
+  - [x] EF Core 10 SQL Server; one DbContext per module with its own schema
+  - [x] Migrations per module, naming `0001_Init`
+  - [x] Seed: platform roles (Identity). Vendor categories and business types move to their own modules' first migrations (Phases 9 and 8), so no module seeds another's data
+  - [x] `EnableRetryOnFailure`, command timeout, NoTracking default for reads
 - [ ] **1.4 Building blocks**
   - [ ] `Result<T>` and error types, `IClock`, `ICurrentUser`
   - [ ] FluentValidation pipeline

@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Modules: the host references only each module's Endpoints project. -->
+    <ProjectReference Include="..\..\Modules\Identity\RedStarVibe.Modules.Identity.Endpoints\RedStarVibe.Modules.Identity.Endpoints.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Versions live in Directory.Packages.props (Central Package Management). -->
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Sinks.Seq" />

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The module's public face to the host: service registration and (from Phase 2) HTTP endpoints.
+    The host references only this project, never Domain or Infrastructure directly.
+  -->
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RedStarVibe.Modules.Identity.Infrastructure\RedStarVibe.Modules.Identity.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

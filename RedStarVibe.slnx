@@ -1,6 +1,15 @@
 <Solution>
   <Folder Name="/src/" />
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/RedStarVibe.BuildingBlocks/RedStarVibe.BuildingBlocks.csproj" />
+  </Folder>
   <Folder Name="/src/Hosts/">
     <Project Path="src/Hosts/RedStarVibe.Api/RedStarVibe.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/Identity/RedStarVibe.Modules.Identity.Domain/RedStarVibe.Modules.Identity.Domain.csproj" />
+    <Project Path="src/Modules/Identity/RedStarVibe.Modules.Identity.Endpoints/RedStarVibe.Modules.Identity.Endpoints.csproj" />
+    <Project Path="src/Modules/Identity/RedStarVibe.Modules.Identity.Infrastructure/RedStarVibe.Modules.Identity.Infrastructure.csproj" />
   </Folder>
 </Solution>
