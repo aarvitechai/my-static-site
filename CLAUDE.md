@@ -17,6 +17,13 @@ to learn production skills. The full roadmap is in [`plan.md`](plan.md) and is t
   case) → harden → document.
 - When a phase starts and the owner asks for micro-steps, give them step by step with code, not a wall of everything at once.
 
+## Phase status
+
+- **Phase 0** (planning and foundation): ADRs, compose, tooling done. Product drafts in `docs/product/` await owner review.
+- **Phase 1** (backend skeleton): next. Owner decisions already made for it:
+  - **Replace the scaffold**: move `frontend/` → `web/`, replace `backend/` with `src/` (`BuildingBlocks`, `Modules`, `Hosts`). Git history keeps the old Products sample.
+  - **Drop SQLite**: SQL Server only (ADR-0002).
+
 ## Current state vs target
 
 The repo is currently an **early learning scaffold**, not yet the target architecture from `plan.md` §1:
@@ -36,8 +43,14 @@ schema-per-module design and will likely be dropped in Phase 1.
 ## Repository layout (current)
 
 ```
-CLAUDE.md, plan.md, README.md
-.github/workflows/deploy.yml   builds frontend/ and deploys to GitHub Pages (runs on frontend/** changes)
+CLAUDE.md, plan.md, README.md, CONTRIBUTING.md, SECURITY.md
+Directory.Build.props          net10.0, nullable, warnings-as-errors, analyzers, NuGet vulnerability audit (all .NET projects)
+.editorconfig, .gitattributes, global.json (SDK 10, rollForward latestFeature)
+docker-compose.yml, .env.example   Redis / Seq / Mailpit; real secrets in git-ignored .env
+docs/adr/                      decisions 0001-0006 (read before changing architecture)
+docs/product/                  personas, MVP user stories (US-01..38), core flows
+.github/                       deploy.yml, PR template, CODEOWNERS, dependabot.yml
+.github/workflows/deploy.yml   builds frontend/ and deploys to GitHub Pages (pushes to `production` touching frontend/**)
 frontend/                      React 19 + TypeScript + Vite
   src/api/products.ts          typed fetch wrapper (base URL from VITE_API_URL, empty in dev)
   src/components/Products.tsx
@@ -52,6 +65,12 @@ backend/
 ```
 
 ## Commands
+
+Dev services (repo root):
+```bash
+docker compose up -d      # Redis :6379, Seq UI :5380 (ingest :5341), Mailpit SMTP :1025 / UI :8025
+docker compose ps         # all healthy?
+```
 
 Frontend (run in `frontend/`):
 ```bash
@@ -82,6 +101,10 @@ In Development the API runs `Database.Migrate()` on startup.
   SQL Browser is disabled; local connections still work. `sqlcmd` is available for inspecting data.
 - Provider is set by `Database:Provider` in `backend/Api/appsettings.json` (`SqlServer` default, or `Sqlite`);
   override per run with env var `Database__Provider`.
+- Docker compose project name is **`rsv-learning`**. Never rename it to `redstarvibe`: another local project
+  (`E:\Practice\RealAIProject\RedStarVibeProject\RedStarVibe`) uses that name, and sharing a name shares containers and
+  volumes (it already happened once with its `redis-data` volume). Never run `docker compose down -v` or `--remove-orphans`
+  without checking `docker compose ps` first.
 - Ports: API 5121 (http) / 7065 (https), Vite 5173. CORS allowed origins are in `Cors:AllowedOrigins`.
 
 ## Architecture rules (from `plan.md`; apply to all new code)
@@ -111,4 +134,11 @@ check, wait for a real success response (`curl -sf`), then stop the servers afte
 
 ## Git
 
-Commit only when asked. The workflow deploys on pushes to `main` that touch `frontend/**`.
+Commit only when asked.
+
+Branches map to environments: `feat/*` → **`dev`** (default, integration) → **`staging`** → **`production`**.
+- New work branches from `dev` and goes back to `dev` through a PR. Never commit directly to `staging` or `production`;
+  they only change through promotion PRs (`dev` → `staging`, `staging` → `production`).
+- `main` is **frozen**: kept for history, no longer used. Don't commit to it or target PRs at it.
+- `deploy.yml` deploys the frontend to GitHub Pages on pushes to `production` that touch `frontend/**`.
+- Hotfix: branch from `production`, PR into `production`, then merge `production` back into `staging` and `dev`.

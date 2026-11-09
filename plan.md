@@ -97,21 +97,22 @@ RedStarVibe/
 
 **Goal:** clear scope, clean repo, everything runs locally with one command.
 
-- [ ] **0.1 Product definition**
+- [ ] **0.1 Product definition** (drafts in `docs/product/`, awaiting owner review)
   - [ ] Write 6 personas (user, vendor, business owner, host, couple, admin)
   - [ ] Write MVP user stories (max 40), tag Must / Should / Could
   - [ ] Draw flows: sign-up, create post, book vendor, create event, wedding checklist
-- [ ] **0.2 Decisions (ADRs in `docs/adr/`)**
-  - [ ] ADR-001 modular monolith
-  - [ ] ADR-002 schema per module on one SQL Server DB
-  - [ ] ADR-003 auth: cookie + JWT refresh
-  - [ ] ADR-004 search: SQL full-text + vectors
-  - [ ] ADR-005 React SPA vs Next.js (public pages SSR)
+- [x] **0.2 Decisions (ADRs in `docs/adr/`)**
+  - [x] ADR-001 modular monolith
+  - [x] ADR-002 schema per module on one SQL Server DB
+  - [x] ADR-003 auth: cookie + JWT refresh
+  - [x] ADR-004 search: SQL full-text + vectors
+  - [x] ADR-005 React SPA vs Next.js (public pages SSR)
+  - [x] ADR-006 local dev services (added: local SQL Server, Mailpit instead of MailHog)
 - [ ] **0.3 Repo and tooling**
-  - [ ] Git repo, trunk-based flow, PR template, CODEOWNERS
-  - [ ] Install .NET 10 SDK, Node 22 LTS, Docker Desktop, Bruno/Postman
-  - [ ] `docker-compose.yml`: SQL Server, Redis, Seq, MailHog
-  - [ ] `.editorconfig`, `Directory.Build.props` (nullable on, warnings as errors, analyzers)
+  - [x] Git repo, trunk-based flow, PR template, CODEOWNERS (+ Dependabot, SECURITY.md)
+  - [ ] Install .NET 10 SDK, Node 22 LTS, Docker Desktop, Bruno/Postman (.NET 10, Node 24 LTS, Docker done; Bruno/Postman not checked)
+  - [x] `docker-compose.yml`: Redis, Seq, Mailpit (SQL Server = local instance, see ADR-006)
+  - [x] `.editorconfig`, `Directory.Build.props` (nullable on, warnings as errors, analyzers, NuGet audit) + `global.json`
 
 ```bash
 dotnet new sln -n RedStarVibe

@@ -1,0 +1,10 @@
+# Owners are requested for review automatically on PRs touching these paths.
+# Later rules win. When collaborators join, assign module owners, e.g. /src/Modules/Bookings/ @someone
+
+*                       @aarvitechai
+
+# Security-sensitive areas: always need owner review
+/.github/               @aarvitechai
+/docs/adr/              @aarvitechai
+Directory.Build.props   @aarvitechai
+docker-compose.yml      @aarvitechai

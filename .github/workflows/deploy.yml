@@ -3,7 +3,7 @@ name: Deploy React App to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - production   # only promoted, approved code reaches the public site
     paths:
       - "frontend/**"
       - ".github/workflows/deploy.yml"

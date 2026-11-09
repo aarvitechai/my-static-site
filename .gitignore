@@ -1,0 +1,20 @@
+# Repository-wide ignores. frontend/ and backend/ have their own .gitignore files too.
+
+# Local secrets and environment overrides: never commit
+.env
+.env.*
+!.env.example
+*.local
+appsettings.*.local.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vs/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs and temp
+*.log
+logs/

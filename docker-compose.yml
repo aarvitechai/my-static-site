@@ -1,0 +1,67 @@
+# Local development services for RedStarVibe.
+#   docker compose up -d        start everything
+#   docker compose ps           check health
+#   docker compose down         stop (data kept in named volumes)
+#
+# SQL Server is NOT here: development uses the local instance DESKTOP-2ERCDGB\MSSQLSERVER01 (see ADR-002).
+# Secrets come from .env (git-ignored). Copy .env.example to .env and fill in values first.
+#
+# Security: every port is bound to 127.0.0.1 so nothing is reachable from your network,
+# services that support auth require a password, and image versions are pinned.
+
+# Unique project name: another local project (E:\Practice\RealAIProject\...\RedStarVibe) already uses
+# "redstarvibe". Same name = shared containers and volumes, so never change this back.
+name: rsv-learning
+
+x-hardening: &hardening
+  restart: unless-stopped
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  redis:
+    <<: *hardening
+    image: redis:7.4-alpine
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  seq:
+    <<: *hardening
+    image: datalust/seq:2025.2
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINPASSWORD: ${SEQ_ADMIN_PASSWORD:?set SEQ_ADMIN_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:5380:80"     # Seq UI      -> http://localhost:5380
+      - "127.0.0.1:5341:5341"   # log ingestion (Serilog sink)
+    volumes:
+      - seq-data:/data
+
+  mailpit:
+    <<: *hardening
+    image: axllent/mailpit:v1.27
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"     # dev only: accept any SMTP credentials
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true" # dev only: allow auth without TLS on localhost
+    ports:
+      - "127.0.0.1:1025:1025"   # SMTP the app sends to
+      - "127.0.0.1:8025:8025"   # Mail UI -> http://localhost:8025
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  redis-data:
+  seq-data:

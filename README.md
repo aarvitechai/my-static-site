@@ -1,4 +1,13 @@
-# Learning App: React + ASP.NET Core
+# RedStarVibe (learning build): React + ASP.NET Core
+
+Roadmap: [`plan.md`](plan.md) · Decisions: [`docs/adr/`](docs/adr/) · Product: [`docs/product/`](docs/product/) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+
+## Quick start
+```bash
+cp .env.example .env          # then set real passwords
+docker compose up -d          # Redis, Seq (http://localhost:5380), Mailpit (http://localhost:8025)
+```
+SQL Server: local instance `DESKTOP-2ERCDGB\MSSQLSERVER01` (Windows auth).
 
 Two independent projects in one repository:
 
