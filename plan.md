@@ -133,10 +133,10 @@ docker compose up -d
   - [ ] Add architecture tests (NetArchTest): no cross-module internals
 - [ ] **1.2 API host**
   - [x] Minimal API + endpoint groups under `/api/v1`
-  - [ ] OpenAPI + Scalar UI
-  - [ ] Global exception handler returning ProblemDetails
-  - [ ] Correlation-ID middleware, Serilog to Seq
-  - [ ] Health: `/health/live`, `/health/ready` (SQL, Redis)
+  - [x] OpenAPI + Scalar UI
+  - [x] Global exception handler returning ProblemDetails
+  - [x] Correlation-ID middleware, Serilog to Seq
+  - [x] Health: `/health/live`, `/health/ready` (SQL, Redis)
   - [ ] Options pattern, per-environment config, User Secrets locally
 - [ ] **1.3 Database**
   - [ ] EF Core 10 SQL Server; one DbContext per module with its own schema

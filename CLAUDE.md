@@ -22,7 +22,7 @@ to learn production skills. The full roadmap is in [`plan.md`](plan.md) and is t
 - **Phase 0** (planning and foundation): done except owner review of `docs/product/` drafts.
 - **Phase 1** (backend skeleton): **in progress**, built in 5 slices, each a PR into `dev`:
   1. ✅ Restructure: `RedStarVibe.slnx`, `src/Hosts/RedStarVibe.Api`, `/api/v1/ping`, `web/`, CI (`ci.yml`)
-  2. ProblemDetails errors, correlation ID, Serilog → Seq, OpenAPI + Scalar, `/health/live` + `/health/ready`
+  2. ✅ ProblemDetails errors, correlation ID, Serilog → Seq, OpenAPI + Scalar, `/health/live` + `/health/ready`
   3. First module (Identity) with its own DbContext + schema, migration `0001_Init`, seed data, retry/timeout
   4. BuildingBlocks: `Result<T>`, FluentValidation pipeline, cursor pagination, idempotency keys, rate limiting
   5. Tests: architecture tests (NetArchTest) + Testcontainers SQL Server integration test running in CI
@@ -52,8 +52,12 @@ docs/product/                  personas, MVP user stories (US-01..38), core flow
 .github/workflows/deploy-cloudflare.yml   web/ -> Cloudflare Pages on pushes to dev/staging/production
 web/public/_headers           Cloudflare Pages security headers (CSP, HSTS, ...); update CSP connect-src when the API gets its own origin
 src/Hosts/RedStarVibe.Api/
-  Program.cs                   composition root: services, middleware, MapGroup("/api/v1")
+  Program.cs                   composition root: services, middleware order, MapGroup("/api/v1")
   Endpoints/                   host-level endpoints (ping); feature endpoints belong in modules
+  Errors/                      GlobalExceptionHandler + ProblemDetails setup (no exception text outside Development)
+  Observability/               CorrelationIdMiddleware (X-Correlation-ID, validated), Serilog setup + request logging
+  Health/                      /health/live (no checks), /health/ready (SQL Server, Redis); JSON without error details
+  OpenApi/                     /openapi/v1.json + /scalar, Development only
   RedStarVibe.Api.http         sample requests
 web/                           React 19 + TypeScript + Vite; vite.config.ts proxies /api -> http://localhost:5080
 ```
@@ -93,6 +97,10 @@ npm run lint
   volumes (it already happened once with its `redis-data` volume). Never run `docker compose down -v` or `--remove-orphans`
   without checking `docker compose ps` first.
 - Ports: API 5080 (http) / 7080 (https), Vite 5173. `AllowedHosts` is `localhost` (host-header filtering); production overrides it.
+- API config: `ConnectionStrings:Sql` in `appsettings.Development.json` (Windows auth, database `RedStarVibe`);
+  `ConnectionStrings:Redis` (contains the password) only in **User Secrets** (`dotnet user-secrets list --project src/Hosts/RedStarVibe.Api`).
+  The API refuses to start if either is missing. Serilog sinks/levels are in the `Serilog` config section; Development also logs to Seq (:5341).
+- Seq's API needs a login; the first login forces a password change, so automated log queries only work after the owner has done that.
 - An old `LearningAppDb` database from the removed scaffold may still exist on the local instance; it is unused.
 
 ## Architecture rules (from `plan.md`; apply to all new code)
@@ -136,3 +144,6 @@ Branches map to environments: `feat/*` → **`dev`** (default, integration) → 
   The workflow reruns the web checks, deploys with pinned Wrangler, then smoke-tests the title and CSP header. Read its logs
   with the GitHub API (no `gh` CLI here). Cloudflare's own Git builds are disabled.
 - Hotfix: branch from `production`, PR into `production`, then merge `production` back into `staging` and `dev`.
+- To promote or fast-forward another branch, **don't `git switch` to it**: switching rewrites files under running dev
+  servers (it once removed `web/vite.config.ts` for a moment and Vite restarted without its `/api` proxy). Instead, after
+  checking the target has no commits of its own, push directly: `git push origin dev:staging`, `git push origin staging:production`.

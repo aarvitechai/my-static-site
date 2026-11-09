@@ -7,4 +7,14 @@
     <UserSecretsId>redstarvibe-api</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Versions live in Directory.Packages.props (Central Package Management). -->
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" />
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" />
+  </ItemGroup>
+
 </Project>

@@ -11,6 +11,7 @@ public static class PingEndpoints
     {
         group.MapGet("/ping", Ping)
             .WithName("Ping")
+            .WithTags("System")
             .WithSummary("Liveness smoke test: returns pong and the server time.")
             .AllowAnonymous();
 

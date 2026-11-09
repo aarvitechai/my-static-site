@@ -3,3 +3,19 @@
 ### Smoke test
 GET {{Api}}/api/v1/ping
 Accept: application/json
+
+### Smoke test with your own correlation ID (echoed in X-Correlation-ID and in the logs)
+GET {{Api}}/api/v1/ping
+X-Correlation-ID: my-debug-session-1
+
+### Error format: unknown route -> 404 ProblemDetails with correlationId
+GET {{Api}}/api/v1/does-not-exist
+
+### Liveness: is the process up? (no dependency checks)
+GET {{Api}}/health/live
+
+### Readiness: are SQL Server and Redis reachable? 503 if not
+GET {{Api}}/health/ready
+
+### OpenAPI document (Development only). Interactive explorer: {{Api}}/scalar
+GET {{Api}}/openapi/v1.json
