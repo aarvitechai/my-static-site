@@ -20,13 +20,15 @@ to learn production skills. The full roadmap is in [`plan.md`](plan.md) and is t
 ## Phase status
 
 - **Phase 0** (planning and foundation): done except owner review of `docs/product/` drafts.
-- **Phase 1** (backend skeleton): **in progress**, built in 5 slices, each a PR into `dev`:
+- **Phase 1** (backend skeleton): ✅ **done** 2026-11-09. DoD verified: ping works, migrations apply to an empty DB, logs carry
+  correlation IDs, Testcontainers integration tests pass in CI. Built in 5 slices:
   1. ✅ Restructure: `RedStarVibe.slnx`, `src/Hosts/RedStarVibe.Api`, `/api/v1/ping`, `web/`, CI (`ci.yml`)
   2. ✅ ProblemDetails errors, correlation ID, Serilog → Seq, OpenAPI + Scalar, `/health/live` + `/health/ready`
   3. ✅ Identity module (Domain/Infrastructure/Endpoints), `IdentityModuleDbContext` (ASP.NET Identity, Guid keys) in schema `identity`, migration `0001_Init`, 5 roles seeded, retry/timeout/NoTracking via BuildingBlocks
   4. ✅ BuildingBlocks: `Result<T>`, FluentValidation pipeline, cursor pagination, idempotency keys, rate limiting, `ICurrentUser`; 34 tests
   5. ✅ Tests: architecture rules (assembly references) + Testcontainers SQL Server 2025 / Redis integration tests in CI; 52 tests total
 - Decisions already made: SQL Server only (no SQLite); the old Products scaffold was removed (in git history before Phase 1).
+- **Phase 2** (identity and security): next. Identity gets its Application (and Contracts) project with the first use case.
 
 ## Current state vs target
 
