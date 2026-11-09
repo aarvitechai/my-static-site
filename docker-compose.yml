@@ -37,7 +37,7 @@ services:
 
   seq:
     <<: *hardening
-    image: datalust/seq:2025.2
+    image: datalust/seq:2026.1.17526
     environment:
       ACCEPT_EULA: "Y"
       SEQ_FIRSTRUN_ADMINPASSWORD: ${SEQ_ADMIN_PASSWORD:?set SEQ_ADMIN_PASSWORD in .env}
