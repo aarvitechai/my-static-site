@@ -45,8 +45,8 @@ Fill in the PR template, including the security checklist.
 | Block force pushes and deletion | ✅ | ✅ | ✅ | ✅ |
 | Restrict who can push / lock branch | | | ✅ | ✅ lock (read-only) |
 
-- Hosting is Cloudflare Pages (ADR-0007): set production branch `production` and preview branches `dev`, `staging` in
-  Cloudflare → Workers & Pages → project → Settings → Builds. Because Cloudflare deploys on push, the approval gate is the
+- Hosting is Cloudflare Pages, deployed by GitHub Actions (ADR-0007, ADR-0008). Needs repo secrets `CLOUDFLARE_API_TOKEN`
+  (Cloudflare Pages: Edit) and `CLOUDFLARE_ACCOUNT_ID`; Cloudflare's own automatic builds stay disabled. Because a push deploys, the approval gate is the
   required review on the `staging` → `production` PR.
 
 Also enable: Settings → Code security → **Dependabot alerts**, **Secret scanning + push protection**, **Private vulnerability reporting**.

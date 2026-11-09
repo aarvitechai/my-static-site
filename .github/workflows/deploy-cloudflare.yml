@@ -1,0 +1,145 @@
+name: Deploy web to Cloudflare Pages
+
+# Builds web/ exactly like CI does, then uploads the result to Cloudflare Pages with Wrangler.
+#   production -> live site (custom domain)
+#   staging    -> https://staging.<project>.pages.dev
+#   dev        -> https://dev.<project>.pages.dev
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   CLOUDFLARE_API_TOKEN   API token with "Cloudflare Pages: Edit" only (least privilege)
+#   CLOUDFLARE_ACCOUNT_ID  Cloudflare account ID
+# Cloudflare's own Git builds should be disabled so the two don't race (ADR-0008).
+
+on:
+  push:
+    branches: [dev, staging, production]
+    paths:
+      - "web/**"
+      - ".github/workflows/deploy-cloudflare.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deploy per branch at a time; never cancel a deploy halfway.
+concurrency:
+  group: deploy-cloudflare-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  PROJECT_NAME: my-static-site
+  WRANGLER_VERSION: 4.156.2
+
+jobs:
+  deploy:
+    name: Build and deploy (${{ github.ref_name }})
+    if: contains(fromJSON('["dev","staging","production"]'), github.ref_name)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: ${{ github.ref_name }}
+      url: ${{ steps.deploy.outputs.url }}
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Check secrets are configured
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        working-directory: .
+        run: |
+          missing=""
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || missing="$missing CLOUDFLARE_ACCOUNT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing. Add them under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: web/.node-version
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      # Same quality gates as CI, so nothing unchecked is ever deployed.
+      - name: Install (exact versions from lock file)
+        run: npm ci
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      # Cloudflare treats a deploy as "production" only when --branch equals the project's
+      # production branch, so read that setting instead of assuming it.
+      - name: Resolve Cloudflare branch
+        id: target
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          response=$(curl -fsS \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/$PROJECT_NAME") || {
+            echo "::error::Could not read Cloudflare Pages project '$PROJECT_NAME'. Check the token permission (Cloudflare Pages: Edit) and the account ID."
+            exit 1
+          }
+          prod_branch=$(echo "$response" | jq -r '.result.production_branch')
+          echo "Cloudflare production branch setting: $prod_branch"
+
+          if [ "$REF_NAME" = "production" ]; then
+            branch="$prod_branch"
+          elif [ "$REF_NAME" = "$prod_branch" ]; then
+            echo "::error::Cloudflare's production branch is set to '$prod_branch', so deploying $REF_NAME would replace the live site. Set it to 'production' in Cloudflare -> Settings -> Build."
+            exit 1
+          else
+            branch="$REF_NAME"
+          fi
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          echo "Deploying $REF_NAME as Cloudflare branch '$branch'"
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          BRANCH: ${{ steps.target.outputs.branch }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          npx --yes "wrangler@$WRANGLER_VERSION" pages deploy dist \
+            --project-name "$PROJECT_NAME" \
+            --branch "$BRANCH" \
+            --commit-hash "$COMMIT_SHA" \
+            --commit-dirty=false \
+            | tee deploy.log
+          url=$(grep -oE 'https://[a-zA-Z0-9.-]+\.pages\.dev' deploy.log | tail -1)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke test the deployment
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          [ -n "$URL" ] || { echo "::warning::No deployment URL found in Wrangler output; skipping smoke test."; exit 0; }
+          for _ in 1 2 3 4 5 6; do
+            if curl -fsS "$URL" | grep -q "<title>Red Star Vibe"; then
+              echo "Deployment is live: $URL"
+              if ! curl -sI "$URL" | grep -qi "content-security-policy"; then
+                echo "::error::Content-Security-Policy header missing (web/public/_headers not applied)"
+                exit 1
+              fi
+              echo "Security headers present"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Deployment URL did not serve the Red Star Vibe page: $URL"
+          exit 1

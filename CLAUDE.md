@@ -46,9 +46,10 @@ Directory.Build.props          net10.0, nullable, warnings-as-errors, analyzers,
 Directory.Packages.props       Central Package Management: versions live ONLY here, never in .csproj
 .editorconfig, .gitattributes, global.json (SDK 10, rollForward latestFeature)
 docker-compose.yml, .env.example   Redis / Seq / Mailpit; real secrets in git-ignored .env
-docs/adr/                      decisions 0001-0007 (read before changing architecture)
+docs/adr/                      decisions 0001-0008 (read before changing architecture)
 docs/product/                  personas, MVP user stories (US-01..38), core flows
 .github/workflows/ci.yml       PRs into dev/staging/production + pushes to dev: restore (audit), build, test, npm audit, lint
+.github/workflows/deploy-cloudflare.yml   web/ -> Cloudflare Pages on pushes to dev/staging/production
 web/public/_headers           Cloudflare Pages security headers (CSP, HSTS, ...); update CSP connect-src when the API gets its own origin
 src/Hosts/RedStarVibe.Api/
   Program.cs                   composition root: services, middleware, MapGroup("/api/v1")
@@ -130,6 +131,8 @@ Branches map to environments: `feat/*` → **`dev`** (default, integration) → 
 - New work branches from `dev` and goes back to `dev` through a PR. Never commit directly to `staging` or `production`;
   they only change through promotion PRs (`dev` → `staging`, `staging` → `production`).
 - `main` is **frozen**: kept for history, no longer used. Don't commit to it or target PRs at it.
-- Hosting: **Cloudflare Pages** builds `web/` straight from GitHub (ADR-0007). `production` → live site, `dev`/`staging` → preview URLs.
-  There is no deploy workflow; Cloudflare builds even when CI fails, so only promote after CI is green.
+- Hosting: **Cloudflare Pages**, deployed by `.github/workflows/deploy-cloudflare.yml` (ADR-0008) on pushes to `dev`/`staging`/`production`
+  touching `web/**`. `production` → live site, `dev`/`staging` → `https://<branch>.my-static-site-1bb.pages.dev`.
+  The workflow reruns the web checks, deploys with pinned Wrangler, then smoke-tests the title and CSP header. Read its logs
+  with the GitHub API (no `gh` CLI here). Cloudflare's own Git builds are disabled.
 - Hotfix: branch from `production`, PR into `production`, then merge `production` back into `staging` and `dev`.

@@ -1,6 +1,6 @@
 # ADR-0007: Host the web app on Cloudflare Pages
 
-- **Status:** Accepted
+- **Status:** Accepted. The build/deploy method is superseded by [ADR-0008](0008-deploy-web-with-github-actions.md)
 - **Date:** 2026-11-09
 
 ## Context
