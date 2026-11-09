@@ -27,7 +27,7 @@
     <!-- Phase 1 slice 4: building blocks -->
     <PackageVersion Include="FluentValidation" Version="12.2.0" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.2.0" />
-    <PackageVersion Include="StackExchange.Redis" Version="3.4.20" />
+    <PackageVersion Include="StackExchange.Redis" Version="3.4.31" />
     <!-- Tests -->
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.14" />
