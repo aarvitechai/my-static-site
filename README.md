@@ -6,19 +6,26 @@ Roadmap: [`plan.md`](plan.md) · Decisions: [`docs/adr/`](docs/adr/) · Product:
 ```bash
 cp .env.example .env          # then set real passwords
 docker compose up -d          # Redis, Seq (http://localhost:5380), Mailpit (http://localhost:8025)
+
+dotnet run --project src/Hosts/RedStarVibe.Api --launch-profile http   # API  -> http://localhost:5080
+cd web && npm install && npm run dev                                   # web  -> http://localhost:5173
 ```
 SQL Server: local instance `DESKTOP-2ERCDGB\MSSQLSERVER01` (Windows auth).
+Smoke test: `GET http://localhost:5080/api/v1/ping` (or open `src/Hosts/RedStarVibe.Api/RedStarVibe.Api.http`).
 
-Two independent projects in one repository:
+## Layout
+```
+RedStarVibe.slnx              .NET solution (open in Visual Studio / Rider)
+src/
+  Hosts/RedStarVibe.Api/      HTTP API host (Minimal APIs under /api/v1)
+  BuildingBlocks/             shared, domain-free code (from Phase 1 slice 4)
+  Modules/                    one folder per module (from Phase 1 slice 3)
+tests/                        unit, integration, architecture tests (from Phase 1 slice 5)
+web/                          React 19 + TypeScript + Vite
+docs/                         ADRs, product docs
+```
+In development Vite proxies `/api/*` to the API, so the browser and API share an origin and no CORS is needed.
 
-| Folder                     | What                                  | Run                                                      |
-|----------------------------|---------------------------------------|----------------------------------------------------------|
-| [`frontend/`](frontend/)   | React + TypeScript + Vite             | `cd frontend && npm install && npm run dev` → :5173       |
-| [`backend/`](backend/)     | ASP.NET Core Web API (.NET 10), EF Core | `cd backend && dotnet run --project Api --launch-profile http` → :5121 |
-
-Each folder has its own README, dependencies and `.gitignore`, and can be opened on its own
-(VS Code for `frontend/`, Visual Studio for `backend/RedStarVibe.slnx`).
-
-They talk over HTTP only: in development Vite proxies `/api/*` to the backend.
-
-`.github/workflows/deploy.yml` builds `frontend/` and deploys it to GitHub Pages.
+## CI/CD
+- `.github/workflows/ci.yml`: build (warnings are errors), NuGet and npm vulnerability audit, lint, tests, on PRs into `dev` / `staging` / `production`.
+- `.github/workflows/deploy.yml`: deploys `web/` to GitHub Pages on pushes to `production`.

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <!-- TargetFramework, nullable, analyzers etc. come from Directory.Build.props at the repo root. -->
+
+  <PropertyGroup>
+    <RootNamespace>RedStarVibe.Api</RootNamespace>
+    <!-- Lets `dotnet user-secrets` store local secrets outside the repo (used from slice 3). -->
+    <UserSecretsId>redstarvibe-api</UserSecretsId>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Hosts/">
+    <Project Path="src/Hosts/RedStarVibe.Api/RedStarVibe.Api.csproj" />
+  </Folder>
+</Solution>

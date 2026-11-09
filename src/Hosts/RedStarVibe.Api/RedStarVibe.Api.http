@@ -1,0 +1,5 @@
+@Api = http://localhost:5080
+
+### Smoke test
+GET {{Api}}/api/v1/ping
+Accept: application/json

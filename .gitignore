@@ -15,6 +15,15 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 
+# .NET build output and tooling
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+TestResults/
+*.trx
+coverage*/
+
 # Logs and temp
 *.log
 logs/

@@ -5,7 +5,7 @@ on:
     branches:
       - production   # only promoted, approved code reaches the public site
     paths:
-      - "frontend/**"
+      - "web/**"
       - ".github/workflows/deploy.yml"
 
   workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false   # never cancel a deploy halfway; queue the next one instead
 
 jobs:
   deploy:
@@ -25,7 +25,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend
+        working-directory: web
 
     environment:
       name: github-pages
@@ -40,7 +40,7 @@ jobs:
         with:
           node-version: lts/*
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: web/package-lock.json
 
       - name: Install Dependencies
         run: npm ci
@@ -54,7 +54,7 @@ jobs:
       - name: Upload Build Files
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./frontend/dist
+          path: ./web/dist
 
       - name: Deploy to GitHub Pages
         id: deployment

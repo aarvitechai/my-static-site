@@ -132,7 +132,7 @@ docker compose up -d
   - [ ] Create projects per module (Domain, Application, Infrastructure, Endpoints)
   - [ ] Add architecture tests (NetArchTest): no cross-module internals
 - [ ] **1.2 API host**
-  - [ ] Minimal API + endpoint groups under `/api/v1`
+  - [x] Minimal API + endpoint groups under `/api/v1`
   - [ ] OpenAPI + Scalar UI
   - [ ] Global exception handler returning ProblemDetails
   - [ ] Correlation-ID middleware, Serilog to Seq

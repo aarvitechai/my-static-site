@@ -1,0 +1,16 @@
+<Project>
+  <!--
+    Central Package Management: every NuGet version is set once, here.
+    Projects reference packages WITHOUT a Version attribute, e.g. <PackageReference Include="Serilog.AspNetCore" />.
+    This keeps all modules on the same versions and makes upgrades a one-line change.
+  -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Transitive packages also get pinned when listed here (used to force patched versions of vulnerable dependencies). -->
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Added as slices need them. -->
+  </ItemGroup>
+</Project>

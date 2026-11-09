@@ -9,7 +9,7 @@ export default defineConfig({
     // During `npm run dev`, forward /api/* calls to the ASP.NET Core backend.
     proxy: {
       '/api': {
-        target: 'http://localhost:5121',
+        target: 'http://localhost:5080',
         changeOrigin: true,
       },
     },

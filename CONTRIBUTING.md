@@ -29,7 +29,7 @@ feat/xyz ──PR──> dev ──PR──> staging ──PR──> production
 ```bash
 docker compose up -d                 # Redis, Seq, Mailpit
 dotnet build                         # must be 0 warnings (warnings are errors)
-cd frontend && npm run build && npm run lint
+cd web && npm run build && npm run lint
 ```
 Fill in the PR template, including the security checklist.
 

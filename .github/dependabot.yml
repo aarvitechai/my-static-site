@@ -11,7 +11,7 @@ updates:
     open-pull-requests-limit: 5
 
   - package-ecosystem: npm
-    directory: /frontend
+    directory: /web
     target-branch: dev
     schedule: { interval: weekly }
     groups:
