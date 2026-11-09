@@ -161,7 +161,11 @@ export const ROADMAP: RoadmapStage[] = [
   {
     stage: 'Now',
     title: 'Foundations',
-    items: ['Secure, versioned API', 'Accounts with modern login security', 'Privacy rules enforced in the database'],
+    items: [
+      'Secure, versioned API: done',
+      'Accounts with modern login security: in progress',
+      'Privacy rules enforced in the database',
+    ],
   },
   {
     stage: 'Next',
