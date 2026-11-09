@@ -20,7 +20,7 @@ concurrency:
 jobs:
   backend:
     name: Backend (.NET)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: ubuntu-latest moves to Ubuntu 26; upgrade deliberately
     timeout-minutes: 15
     env:
       DOTNET_NOLOGO: true
@@ -47,7 +47,7 @@ jobs:
 
   web:
     name: Web (React)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: ubuntu-latest moves to Ubuntu 26; upgrade deliberately
     timeout-minutes: 10
     defaults:
       run:
