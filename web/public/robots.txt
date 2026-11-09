@@ -1,0 +1,4 @@
+# Search engines may index the public site.
+# Preview deployments (dev, staging) are kept out of search results by the X-Robots-Tag header in _headers.
+User-agent: *
+Allow: /
